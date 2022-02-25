@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+		<style>
+			em {
+				font-style: normal;
+			}
+		</style>
+	</head>
+	<body>
+		<p id="txt"></p>
+		<script>
+			const data = [{
+				"paraId": 0,
+				"paraText": "武汉大学坐落于武汉市珞珈山",
+				"paraEntity": [{
+						"category": "名词",
+						"type": "学校",
+						"labelText": "武汉大学",
+						"ename": "plane",
+						"startIndex": 0,
+						"endIndex": 4,
+						"color": 'rgba(240,215,12,.5)'
+					},
+					{
+						"category": "地名",
+						"type": "城市",
+						"labelText": "武汉",
+						"ename": "test",
+						"startIndex": 7,
+						"endIndex": 9,
+						"color": '#00baff'
+					}
+				]
+			}];
+			/* 切割和拼成em */
+			function createElement(textStr, tagName = 'em', k) {
+				let NewTextStr = '';
+				for (let i = 0; i < textStr.length; i += 1) {
+					NewTextStr += `<${tagName} data-paranum="${k}" data-index="${i}">${textStr[i]}</${tagName}>`;
+				}
+				return NewTextStr;
+			};
+			let markTxt = '';
+
+			function mark() {
+				const fileText = '武汉大学坐落于武汉市珞珈山';
+				const k = 0;
+				let emStr = createElement(fileText, 'em', k);
+				data.forEach((e) => {
+					let hightStr = '';
+					let notHightStr = '';
+					for (let m = 0; m < e.paraEntity.length; m += 1) {
+						for (let i = 0; i < e.paraEntity[m].labelText.length; i += 1) {
+							notHightStr =
+								`<em data-paranum="${k}" data-index="${i + e.paraEntity[m].startIndex}">${e.paraEntity[m].labelText[i]}</em>`;
+							hightStr =
+								`<em data-paranum="${k}" data-index="${i + e.paraEntity[m].startIndex}" style="background: ${ e.paraEntity[m].color};">${e.paraEntity[m].labelText[i]}</em>`;
+							// TODO 为什么这里需要全局匹配，为什么全局匹配就会正则报错，主要是 ]
+							// emStr = emStr.replace(new RegExp(notHightStr, 'gm'), hightStr);
+							emStr = emStr.replace(notHightStr, hightStr);
+							console.log(notHightStr, hightStr, emStr);
+						}
+					}
+				});
+				markTxt += `<p>${emStr}</p>`;
+			};
+			mark();
+			document.getElementById('txt').innerHTML = markTxt;
+			console.log(markTxt);
+		</script>
+	</body>
+</html>
